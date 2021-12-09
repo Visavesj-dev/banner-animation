@@ -17,7 +17,7 @@ const WaveShaderMaterial = shaderMaterial(
     precision mediump float;
  
     varying vec2 vUv;
-    // varying float vWave;
+    varying float vWave;
 
     uniform float uTime;
 
@@ -31,7 +31,7 @@ const WaveShaderMaterial = shaderMaterial(
       float noiseAmp = 0.1;
       vec3 noisePos = vec3(pos.x * noiseFreq + uTime, pos.y, pos.z);
       pos.z += snoise3(noisePos) * noiseAmp;
-      // vWave = pos.z;
+      vWave = pos.z;
 
       gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);  
     }
@@ -42,16 +42,16 @@ const WaveShaderMaterial = shaderMaterial(
 
     uniform vec3 uColor;
     uniform float uTime;
-    // uniform sampler2D uTexture;
+    uniform sampler2D uTexture;
 
     varying vec2 vUv;
-    // varying float vWave;
+    varying float vWave;
 
     void main() {
-      // float wave = vWave * 0.1;
-      // vec3 texture = texture2D(uTexture, vUv + wave).rgb;
-      // gl_FragColor = vec4(texture, 1.0); 
-      gl_FragColor = vec4(sin(vUv.x + uTime) * uColor, 1.0);
+      float wave = vWave * 0.1;
+      vec3 texture = texture2D(uTexture, vUv + wave).rgb;
+      gl_FragColor = vec4(texture, 1.0); 
+      // gl_FragColor = vec4(cos(-vUv.x + uTime) * uColor, 3.0);
     }
   `
 );
@@ -69,7 +69,7 @@ const Wave = () => {
   return (
     <mesh>
       <planeBufferGeometry args={[1, 1, 16, 16]} />
-      <waveShaderMaterial uColor={"hotpink"} ref={ref} uTexture={image} />
+      <waveShaderMaterial ref={ref} uTexture={image} />
     </mesh>
   );
 };
